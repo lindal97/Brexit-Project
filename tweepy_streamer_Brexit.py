@@ -90,7 +90,7 @@ class MyListener(StreamListener):
             if len(re)>0:
                 c.execute(''' insert or ignore into users
                       (user_id, user_screen_name, username,user_description, 
-                      user_location, user_followers, user_friends, user_created at,)
+                      user_location, user_followers, user_friends, user_created at),
                       values(?, ?, ?, ?, ?, ?, ?, ?) ''',  user_info)
             twitter = (status.id_str, status.user.id_str, status.user.screen_name, status.user.name, 
                        status.created_at, status.text, users_mentioned, url, url_title,
@@ -115,10 +115,12 @@ class MyListener(StreamListener):
             order='insert or ignore into '+ table + '''(id, user_id, 
                 user_screen_name, username, created_at, fulltext, 
                 users_mentioned, url, url_title, in_reply_to_userid, 
-                in_reply_to_userscreename, retweet_uid, retweet_id, retweet)'''
+                in_reply_to_userscreename, retweet_uid, retweet_id, retweet) 
+		values(?,?,?,?,?,?,?,?,?,?,?,?,?,?)'''
             c.execute(order, twitter)
             
         timestamp_previous=time.strftime("%Y%m%d_%H")
+
     def on_error(self, status):
         print(status)
         
