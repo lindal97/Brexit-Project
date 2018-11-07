@@ -118,7 +118,7 @@ class MyListener(StreamListener):
                 in_reply_to_userscreename, retweet_uid, retweet_id, retweet) 
 		values(?,?,?,?,?,?,?,?,?,?,?,?,?,?)'''
             c.execute(order, twitter)
-            
+            conn.commit()
         timestamp_previous=time.strftime("%Y%m%d_%H")
 
     def on_error(self, status):
