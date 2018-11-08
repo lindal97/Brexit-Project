@@ -13,7 +13,7 @@ Set:	yourtagone and yourtagtwo for firstthing
 	api keys
 Last modified: Nov 2018
 
-an updated version to write directly to AWS RDS repository, running on AWS EC2
+an updated version to write directly to AWS RDS repository, running on AWS lambda
 """
 import tweepy
 from tweepy import OAuthHandler
