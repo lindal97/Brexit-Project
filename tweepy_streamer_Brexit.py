@@ -6,12 +6,13 @@ Created on Wed Oct 31 16:10:09 2018
 """
 
 """
-Based on Charles Rahals' work in Aug 2016, modified to save data into sql database
+Based on Charles Rahals' work in Aug 2016, modified to save data into sql database. This version is for raspberry pie & other local terminals, with data saved on sql. For the aws version, see another .py file in this folder.
 Listen to Twitter for multiple tags on multiple different subjects at once.
 Set:	yourtagone and yourtagtwo for firstthing
 	yourtagthree and yourtagfour for secondthing
 	api keys
 Last modified: August 2016
+
 """
 import tweepy
 from tweepy import OAuthHandler
