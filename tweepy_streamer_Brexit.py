@@ -23,10 +23,10 @@ import sys
 import sqlite3 as sqlite
 
 
-consumer_key = ''
-consumer_secret = ''
-access_token = ''
-access_secret = ''
+consumer_key = 'h8FMRJuhE95FCPnOCKMZjsk3W'
+consumer_secret = 'SfzG31fAs2r0gtPzN81WVoaeGy6gtiEnjbsFeN6AbXo5fIfE45'
+access_token = '241046971-k1Z6p8STUA5NRNn2xPhEwildb1HoO7iutpcfHBLQ'
+access_secret = 'LEg2Qip32CAStYeQGNQb5I0DC46jmWo2id9Kvp4A2nON4'
 auth = OAuthHandler(consumer_key, consumer_secret)
 auth.set_access_token(access_token, access_secret)
 api = tweepy.API(auth, wait_on_rate_limit = True, wait_on_rate_limit_notify = True)
