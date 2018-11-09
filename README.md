@@ -1,7 +1,7 @@
 # Brexit-Project
 
 ----------------------------
-Nov. 18 update
+Nov. 8 update
 
 Current Status:
 Created an AWS lambda instance and a RDS instance(using mySQL), tweaking it & refining python code for it.
