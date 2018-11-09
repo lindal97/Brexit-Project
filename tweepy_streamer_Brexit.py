@@ -6,13 +6,12 @@ Created on Wed Oct 31 16:10:09 2018
 """
 
 """
-Based on Charles Rahals' work in Aug 2016, modified to save data into sql database. This version is for raspberry pie & other local terminals, with data saved on sql. For the aws version, see another .py file in this folder.
+Based on Charles Rahals' work in Aug 2016, modified to save data into sql database
 Listen to Twitter for multiple tags on multiple different subjects at once.
 Set:	yourtagone and yourtagtwo for firstthing
 	yourtagthree and yourtagfour for secondthing
 	api keys
 Last modified: August 2016
-
 """
 import tweepy
 from tweepy import OAuthHandler
@@ -36,23 +35,23 @@ from tweepy.streaming import StreamListener
 timestamp_previous= time.strftime("%Y%m%d_%H")
 hourscounter=0
 
-conn= sqlite.connect('insert path here/brexit')
+conn= sqlite.connect('path here/brexit.sqlite')
 c = conn.cursor()
 c.execute('''CREATE TABLE if NOT EXISTS users
              (user_id unique, user_screen_name text, username text,
              user_description text, user_location text, user_followers int, 
-             user_friends int, user_created at text,)''')
+             user_friends int, user_created_at text)''')
 
 c.execute('''CREATE TABLE if NOT EXISTS keyword1
              (id unique, user_id text, user_screen_name text, username text,
-              created_at text, fulltext text, users_mentioned text, url text,
-              url_title text, in_reply_to_userid text, in_reply_to_userscreename text
+              created_at text, fulltext text, users_mentioned text, 
+              in_reply_to_userid text, in_reply_to_userscreename text,
               retweet_uid text, retweet_id text, retweet text)''')
 
 c.execute('''CREATE TABLE if NOT EXISTS keyword2
              (id unique, user_id text, user_screen_name text, username text,
-              created_at text, fulltext text, users_mentioned text, url text, 
-              url_title text,in_reply_to_userid text, in_reply_to_userscreename text
+              created_at text, fulltext text, users_mentioned text,  
+              in_reply_to_userid text, in_reply_to_userscreename text,
               retweet_uid text, retweet_id text, retweet text)''')
 
 
@@ -62,8 +61,8 @@ class MyListener(StreamListener):
         global timestamp_previous
         timestamp= time.strftime("%Y%m%d_%H")
         table=None
-        if 'yourtagone' in status.text or 'yourtagtwo' in status.text:
-            table='keyword1'
+        if 'yourtag1' in status.text or 'yourtag2' in status.text:
+            table='keyword2'
         elif 'yourtagthree' in status.text or 'yourtagfour' in status.text:
             table='keyword2'
         if table is not None:
@@ -76,52 +75,46 @@ class MyListener(StreamListener):
             if status.user.description is not None:
                 status.user.description=status.user.description.replace('\n', ' ')
                 status.user.description=status.user.description.replace('\r', ' ')
-            users_mentioned=''
             retweet_id=''
             retweet_uid=''
             retweet=''
-            url=''
-            url_title=''
+            text=status.text
             user_info = (status.user.id_str, status.user.screen_name, status.user.name, 
                          status.user.description, status.user.location,status.user.followers_count,
                        status.user.friends_count,status.user.created_at)
             uid=status.user.id_str
-            c.execute('''SELECT * FROM users WHERE user_id=uid ''')
+            c.execute('''SELECT * FROM users WHERE user_id LIKE '''+uid)
             re=c.fetchall()
-            if len(re)>0:
-                c.execute(''' insert or ignore into users
+            if len(re)==0:
+                c.execute(''' insert into users
                       (user_id, user_screen_name, username,user_description, 
-                      user_location, user_followers, user_friends, user_created at),
-                      values(?, ?, ?, ?, ?, ?, ?, ?) ''',  user_info)
-            twitter = (status.id_str, status.user.id_str, status.user.screen_name, status.user.name, 
-                       status.created_at, status.text, users_mentioned, url, url_title,
-                       status.in_reply_to_user_id_str, status.in_reply_to_screen_name,
-                       retweet_id, retweet_uid,retweet)
-            if status.entities.user_mentions != []:
-                for i in range(len(status.entities.user_mentions)):
-                    user=status.entities.user_mentions[i].id_str
-                    users_mentioned.append += user+', '
+                      user_location, user_followers, user_friends, user_created_at)
+                      values(?, ?, ?, ?, ?, ?, ?, ?)''',  user_info)
+                print(user_info)
+            
             if status.truncated is True:
-                try:
-                    twitter[5]=status.extended_tweet.full_text
-                except:
-                    pass
-            if status.retweeted_status is not None:
+                text=status.extended_tweet['full_text']
+            if hasattr(status, 'retweeted_status'):
                 retweet_id=status.retweeted_status.id_str
                 retweet_uid=status.retweeted_status.user.id_str
                 retweet=status.retweeted_status.text
-            if status.entities.urls.unwound is not None:
-                url=status.entities.urls.unwound.url
-                url_title=status.entities.urls.unwound.title
-            order='insert or ignore into '+ table + '''(id, user_id, 
+            if hasattr(status, 'quote_status'):
+                retweet_id=status.quoted_status.id_str
+                retweet_uid=status.quoted_status.user.id_str
+                retweet=status.quoted_status.text
+            twitter = (status.id_str, status.user.id_str, status.user.screen_name, status.user.name, 
+                       status.created_at, text, 
+                       status.in_reply_to_user_id_str, status.in_reply_to_screen_name,
+                       retweet_id, retweet_uid,retweet)
+            print(twitter) 
+            order='insert into '+ table + '''(id, user_id, 
                 user_screen_name, username, created_at, fulltext, 
-                users_mentioned, url, url_title, in_reply_to_userid, 
-                in_reply_to_userscreename, retweet_uid, retweet_id, retweet) 
-		values(?,?,?,?,?,?,?,?,?,?,?,?,?,?)'''
+                 in_reply_to_userid, 
+                in_reply_to_userscreename, retweet_uid, retweet_id, retweet)
+            VALUES (?,?,?,?,?,?,?,?,?,?,?)'''
             c.execute(order, twitter)
-            conn.commit()
+        conn.commit()
         timestamp_previous=time.strftime("%Y%m%d_%H")
-
     def on_error(self, status):
         print(status)
         
@@ -129,8 +122,9 @@ class MyListener(StreamListener):
 twitter_stream = Stream(auth, MyListener())
 while True:
     try: 
-        twitter_stream.filter(track=['yourtagone','yourtagtwo','yourtagthree','yourtagfour'], lang='en')
+        twitter_stream.filter(track=['brexit'])    
     except:
         e = sys.exc_info()[0]
         print('ERROR:',e) 
         continue
+    
