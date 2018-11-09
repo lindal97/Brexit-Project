@@ -90,7 +90,6 @@ class MyListener(StreamListener):
                       (user_id, user_screen_name, username,user_description, 
                       user_location, user_followers, user_friends, user_created_at)
                       values(?, ?, ?, ?, ?, ?, ?, ?)''',  user_info)
-                print(user_info)
             
             if status.truncated is True:
                 text=status.extended_tweet['full_text']
@@ -106,7 +105,7 @@ class MyListener(StreamListener):
                        status.created_at, text, 
                        status.in_reply_to_user_id_str, status.in_reply_to_screen_name,
                        retweet_id, retweet_uid,retweet)
-            print(twitter) 
+            
             order='insert into '+ table + '''(id, user_id, 
                 user_screen_name, username, created_at, fulltext, 
                  in_reply_to_userid, 
