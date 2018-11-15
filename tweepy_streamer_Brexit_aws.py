@@ -72,9 +72,7 @@ conn = pymysql.connect(loginfo[0],loginfo[1],loginfo[2],loginfo[3])
 
 c = conn.cursor()
 
-c.execute('''CREATE TABLE if NOT EXISTS users
-             (number INT NOT NULL AUTO_INCREMENT,
-             user_id CHAR(24) NOT NULL, user_screen_name CHAR(32), username CHAR(32),
+c.execute('''CREATE TABLE if NOT EXISTS users(user_id CHAR(24) NOT NULL, user_screen_name CHAR(32), username CHAR(32),
              user_description TEXT(512), user_location CHAR(100), user_followers INT, 
              user_friends INT, user_created_at VARCHAR(100), PRIMARY KEY(user_id));''')
 
