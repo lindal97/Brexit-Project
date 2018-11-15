@@ -150,14 +150,13 @@ class MyListener(StreamListener):
                 in_reply_to_userscreename, retweet_uid, retweet_id, retweet)
                 VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)'''
             twitter = (status.id_str, status.user.id_str, status.user.screen_name, status.user.name, 
-                   status.created_at, status.text,  
+                   status.created_at, status.text, users_mentioned, 
                    status.in_reply_to_user_id_str, status.in_reply_to_screen_name,
                    retweet_id, retweet_uid,retweet)
-	    try:
-            	c.execute(order, twitter)
-	    except:
-		pass
-            conn.commit()
+            try:
+                c.execute(order, twitter)
+            except:
+                pass
         timestamp_previous=time.strftime("%Y%m%d_%H")
     def on_error(self, status):
         logging.warning(status)
