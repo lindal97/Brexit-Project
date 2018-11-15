@@ -60,15 +60,10 @@ timestamp_previous = time.strftime("%Y%m%d_%H")
 hourscounter = 0
 
 
-
-loginfo= {'host': 'ec2-18-130-144-227.eu-west-2.compute.amazonaws.com',
-  'username': 'lindal97'@'%',
-  'password': 'BreXit2019@',
-  'db': 'twitterdata'}
+loginfo= load_token('SQL auth.txt')
 
 
-
-conn = pymysql.connect()
+conn = pymysql.connect(loginfo[0],loginfo[1],loginfo[2],loginfo[3])
 c = conn.cursor()
 
 c.execute('''CREATE TABLE if NOT EXISTS users
