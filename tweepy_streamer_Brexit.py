@@ -21,14 +21,40 @@ import csv
 import json
 import sys
 import sqlite3 as sqlite
+import logging
+
+logging.basicConfig(level = logging.INFO, datefmt = '%a, %d %b %Y %H:%M:%S',
+                    format='%(asctime)s %(levelname)s %(message)s',
+                    filename='twitter_scraper.log')
+
+'''
+note:the load_token takes a .txt file with these auth in sequence
+consumer key, consumer secret, access token, access secret
+'''
+
+'''
+note:the load_token takes a .txt file with these auth in sequence
+consumer key, consumer secret, access token, access secret
+'''
+
+def load_token(textfile):
+    try:
+        with open(textfile, 'r') as file:
+            auth=file.readlines()
+            keys=[]
+            for i in auth:
+                i=str(i).strip()
+                keys.append(i)
+        return keys
+    except EnvironmentError:
+        print('Error loading access token from file')
+
+auth=load_token("auth.txt") 
 
 
-consumer_key = 'h8FMRJuhE95FCPnOCKMZjsk3W'
-consumer_secret = 'SfzG31fAs2r0gtPzN81WVoaeGy6gtiEnjbsFeN6AbXo5fIfE45'
-access_token = '241046971-k1Z6p8STUA5NRNn2xPhEwildb1HoO7iutpcfHBLQ'
-access_secret = 'LEg2Qip32CAStYeQGNQb5I0DC46jmWo2id9Kvp4A2nON4'
-auth = OAuthHandler(consumer_key, consumer_secret)
-auth.set_access_token(access_token, access_secret)
+
+auth = OAuthHandler(auth[0], auth[1])
+auth.set_access_token(auth[2], auth[3])
 api = tweepy.API(auth, wait_on_rate_limit = True, wait_on_rate_limit_notify = True)
 from tweepy import Stream
 from tweepy.streaming import StreamListener
@@ -42,15 +68,9 @@ c.execute('''CREATE TABLE if NOT EXISTS users
              user_description text, user_location text, user_followers int, 
              user_friends int, user_created_at text)''')
 
-c.execute('''CREATE TABLE if NOT EXISTS keyword1
+c.execute('''CREATE TABLE if NOT EXISTS twitters
              (id unique, user_id text, user_screen_name text, username text,
               created_at text, fulltext text, users_mentioned text, 
-              in_reply_to_userid text, in_reply_to_userscreename text,
-              retweet_uid text, retweet_id text, retweet text)''')
-
-c.execute('''CREATE TABLE if NOT EXISTS keyword2
-             (id unique, user_id text, user_screen_name text, username text,
-              created_at text, fulltext text, users_mentioned text,  
               in_reply_to_userid text, in_reply_to_userscreename text,
               retweet_uid text, retweet_id text, retweet text)''')
 
@@ -61,15 +81,15 @@ class MyListener(StreamListener):
         global timestamp_previous
         timestamp= time.strftime("%Y%m%d_%H")
         table=None
-        if 'yourtag1' in status.text or 'yourtag2' in status.text:
-            table='keyword2'
-        elif 'yourtagthree' in status.text or 'yourtagfour' in status.text:
-            table='keyword2'
+        for k in keywords:
+            if k in status.text:
+                table='twitters'
+                break
         if table is not None:
             if timestamp!=timestamp_previous:
                 hourscounter+=1
-                print('Stream has been up for:',hourscounter,' hours')
-        
+                logging.info('Stream has been up for:',hourscounter,' hours')
+                logging.log("sample streaming data now: " + str(twitter) + " ," + str(user))
             status.text=status.text.replace('\n', ' ')
             status.text=status.text.replace('\r', ' ')
             if status.user.description is not None:
@@ -90,6 +110,7 @@ class MyListener(StreamListener):
                       (user_id, user_screen_name, username,user_description, 
                       user_location, user_followers, user_friends, user_created_at)
                       values(?, ?, ?, ?, ?, ?, ?, ?)''',  user_info)
+                #print(user_info)
             
             if status.truncated is True:
                 text=status.extended_tweet['full_text']
@@ -105,7 +126,7 @@ class MyListener(StreamListener):
                        status.created_at, text, 
                        status.in_reply_to_user_id_str, status.in_reply_to_screen_name,
                        retweet_id, retweet_uid,retweet)
-            
+            #print(twitter) 
             order='insert into '+ table + '''(id, user_id, 
                 user_screen_name, username, created_at, fulltext, 
                  in_reply_to_userid, 
@@ -115,15 +136,18 @@ class MyListener(StreamListener):
         conn.commit()
         timestamp_previous=time.strftime("%Y%m%d_%H")
     def on_error(self, status):
-        print(status)
+        logging.warning(status)
         
+keywords=load_token('keywords.txt')
         
 twitter_stream = Stream(auth, MyListener())
 while True:
     try: 
-        twitter_stream.filter(track=['brexit'])    
-    except:
+        twitter_stream.filter(track=keywords, async=True)
+        
+    except TypeError:
         e = sys.exc_info()[0]
-        print('ERROR:',e) 
+        logging.error('ERROR:',e) 
+        time.sleep(60)
         continue
     
