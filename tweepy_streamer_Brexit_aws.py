@@ -70,8 +70,7 @@ conn = pymysql.connect(loginfo[0],loginfo[1],loginfo[2],loginfo[3])
 c = conn.cursor()
 
 c.execute('''CREATE TABLE if NOT EXISTS users
-             (number INT NOT NULL AUTO_INCREMENT,
-             user_id CHAR(24) NOT NULL, user_screen_name CHAR(32), username CHAR(32),
+             (user_id CHAR(24) NOT NULL, user_screen_name CHAR(32), username CHAR(32),
              user_description VARCHAR, user_location CHAR(255), user_followers INT, 
              user_friends INT, user_created at CHAR(255), PRIMARY KEY(user_id))''')
 
@@ -135,11 +134,11 @@ class MyListener(StreamListener):
                        retweet_id, retweet_uid,retweet)
             order = 'insert into '+ table + '''(id, user_id, 
                 user_screen_name, username, created_at, fulltext, 
-                users_mentioned,  in_reply_to_userid, 
+                in_reply_to_userid, 
                 in_reply_to_userscreename, retweet_uid, retweet_id, retweet)
                 VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)'''
             twitter = (status.id_str, status.user.id_str, status.user.screen_name, status.user.name, 
-                   status.created_at, status.text, users_mentioned, 
+                   status.created_at, status.text,
                    status.in_reply_to_user_id_str, status.in_reply_to_screen_name,
                    retweet_id, retweet_uid,retweet)
             c.execute(order, twitter)
