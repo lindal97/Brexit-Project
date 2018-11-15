@@ -125,7 +125,7 @@ class MyListener(StreamListener):
             if len(re) == 0:
                 c.execute('''INSERT INTO users (user_id, user_screen_name, username,user_description, 
                               user_location, user_followers, user_friends, user_created_at)
-                              VALUES (%s,%s,%s,%s,%s,%s,%s,%s))''', user_info)
+                              VALUES (%s,%s,%s,%s,%s,%s,%s,%s)''', user_info)
 
             if status.truncated is True:
                 text=status.extended_tweet['full_text']
