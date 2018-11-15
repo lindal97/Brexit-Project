@@ -123,12 +123,13 @@ class MyListener(StreamListener):
             c.execute('''SELECT * FROM users WHERE user_id LIKE ''' + uid)
             re = c.fetchall()
             if len(re) == 0:
-		try:c.execute(''' INSERT INTO users
-			      (user_id, user_screen_name, username,user_description, 
-			      user_location, user_followers, user_friends, user_created_at)
-			      VALUES (%s,%s,%s,%s,%s,%s,%s,%s)''', user_info)
-		except:pass
-                      
+                try:
+                    c.execute(''' INSERT INTO users
+                              (user_id, user_screen_name, username,user_description, 
+                              user_location, user_followers, user_friends, user_created_at)
+                              VALUES (%s,%s,%s,%s,%s,%s,%s,%s));''', user_info)
+                except:
+                    pass
             if status.truncated is True:
                 text=status.extended_tweet['full_text']
             if hasattr(status, 'retweeted_status'):
