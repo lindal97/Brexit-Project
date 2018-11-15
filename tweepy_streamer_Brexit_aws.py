@@ -76,11 +76,11 @@ c.execute('''CREATE TABLE if NOT EXISTS users(user_id CHAR(24) NOT NULL, user_sc
              user_description TEXT(512), user_location CHAR(100), user_followers INT, 
              user_friends INT, user_created_at VARCHAR(100), PRIMARY KEY(user_id));''')
 
-c.execute('''CREATE TABLE if NOT EXISTS twitters (
+c.execute('''CREATE TABLE if NOT EXISTS twitter (
               id CHAR(32) NOT NULL,
               user_id CHAR(24),
-              user_screen_name CHAR(32),
-              username CHAR(32),
+              user_screen_name CHAR(100),
+              username CHAR(100),
               created_at VARCHAR(100),
               full_text TEXT(512),
               in_reply_to_userid CHAR(24),
@@ -99,7 +99,7 @@ class MyListener(StreamListener):
         table = None
         for k in keywords:
             if k in status.text:
-                table='twitters'
+                table='twitter'
                 break
         if table is not None:
             if timestamp!=timestamp_previous:
