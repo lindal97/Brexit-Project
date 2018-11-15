@@ -123,10 +123,13 @@ class MyListener(StreamListener):
             c.execute('''SELECT * FROM users WHERE user_id LIKE ''' + uid)
             re = c.fetchall()
             if len(re) == 0:
-                c.execute(''' INSERT INTO users
-                      (user_id, user_screen_name, username,user_description, 
-                      user_location, user_followers, user_friends, user_created_at)
-                      VALUES (%s,%s,%s,%s,%s,%s,%s,%s)''', user_info)
+		try:
+			c.execute(''' INSERT INTO users
+			      (user_id, user_screen_name, username,user_description, 
+			      user_location, user_followers, user_friends, user_created_at)
+			      VALUES (%s,%s,%s,%s,%s,%s,%s,%s)''', user_info)
+		except:
+			pass
                       
             if status.truncated is True:
                 text=status.extended_tweet['full_text']
@@ -151,7 +154,10 @@ class MyListener(StreamListener):
                    status.created_at, status.text,  
                    status.in_reply_to_user_id_str, status.in_reply_to_screen_name,
                    retweet_id, retweet_uid,retweet)
-            c.execute(order, twitter)
+	    try:
+            	c.execute(order, twitter)
+	    except:
+		pass
             conn.commit()
         timestamp_previous=time.strftime("%Y%m%d_%H")
     def on_error(self, status):
