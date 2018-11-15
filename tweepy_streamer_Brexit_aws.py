@@ -126,7 +126,7 @@ class MyListener(StreamListener):
                 c.execute(''' INSERT INTO users
                       (user_id, user_screen_name, username,user_description, 
                       user_location, user_followers, user_friends, user_created_at)
-                      VALUES (%s,%s,%s,%s,%s,%s,%s,%s));''', user_info)
+                      VALUES (%s,%s,%s,%s,%s,%s,%s,%s))''', user_info)
                       
             if status.truncated is True:
                 text=status.extended_tweet['full_text']
@@ -146,7 +146,7 @@ class MyListener(StreamListener):
                 user_screen_name, username, created_at, fulltext, 
                 users_mentioned,  in_reply_to_userid, 
                 in_reply_to_userscreename, retweet_uid, retweet_id, retweet)
-                VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);'''
+                VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)'''
             twitter = (status.id_str, status.user.id_str, status.user.screen_name, status.user.name, 
                    status.created_at, status.text, users_mentioned, 
                    status.in_reply_to_user_id_str, status.in_reply_to_screen_name,
