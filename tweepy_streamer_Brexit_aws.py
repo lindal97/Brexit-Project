@@ -76,7 +76,7 @@ c.execute('''CREATE TABLE if NOT EXISTS users(user_id CHAR(24) NOT NULL, user_sc
              user_description TEXT(512), user_location CHAR(100), user_followers INT, 
              user_friends INT, user_created_at VARCHAR(100), PRIMARY KEY(user_id));''')
 
-c.execute('''CREATE TABLE if NOT EXISTS twitter (
+c.execute('''CREATE TABLE if NOT EXISTS twitters (
               id CHAR(32) NOT NULL,
               user_id CHAR(24),
               user_screen_name CHAR(32),
