@@ -72,13 +72,13 @@ c = conn.cursor()
 c.execute('''CREATE TABLE if NOT EXISTS users
              (user_id CHAR(24) NOT NULL, user_screen_name CHAR(32), username CHAR(32),
              user_description VARCHAR, user_location CHAR(255), user_followers INT, 
-             user_friends INT, user_created_at CHAR(255), PRIMARY KEY(user_id))''')
+             user_friends INT, user_created_at CHAR(255), PRIMARY KEY(user_id));''')
 
 c.execute('''CREATE TABLE if NOT EXISTS twitter
              (id CHAR(32) NOT NULL, user_id CHAR(24), user_screen_name CHAR(32), username CHAR(32),
-              created_at CHAR(100), fulltext VARCHAR, users_mentioned VARCHAR,
+              created_at CHAR(100), fulltext VARCHAR, 
               in_reply_to_userid CHAR(24), in_reply_to_userscreename CHAR(32)
-              retweet_uid CHAR(24), retweet_id CHAR(32), retweet VARCHAR, PRIMARY KEY(id))''')
+              retweet_uid CHAR(24), retweet_id CHAR(32), retweet VARCHAR, PRIMARY KEY(id));''')
 
 
 class MyListener(StreamListener):
@@ -110,13 +110,13 @@ class MyListener(StreamListener):
                          status.user.description, status.user.location,status.user.followers_count,
                        status.user.friends_count,status.user.created_at)
             uid = status.user.id_str
-            c.execute('''SELECT * FROM users WHERE user_id LIKE ''' + uid)
+            c.execute('''SELECT * FROM users WHERE user_id LIKE ''' + uid + ";")
             re = c.fetchall()
             if len(re) == 0:
                 c.execute(''' INSERT INTO users
                       (user_id, user_screen_name, username,user_description, 
                       user_location, user_followers, user_friends, user_created_at)
-                      VALUES (%s,%s,%s,%s,%s,%s,%s,%s))''', user_info)
+                      VALUES (%s,%s,%s,%s,%s,%s,%s,%s));''', user_info)
                       
             if status.truncated is True:
                 text=status.extended_tweet['full_text']
@@ -136,7 +136,7 @@ class MyListener(StreamListener):
                 user_screen_name, username, created_at, fulltext, 
                 in_reply_to_userid, 
                 in_reply_to_userscreename, retweet_uid, retweet_id, retweet)
-                VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)'''
+                VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);'''
             twitter = (status.id_str, status.user.id_str, status.user.screen_name, status.user.name, 
                    status.created_at, status.text,
                    status.in_reply_to_user_id_str, status.in_reply_to_screen_name,
