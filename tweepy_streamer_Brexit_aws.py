@@ -111,7 +111,7 @@ class MyListener(StreamListener):
             if status.user.description is not None:
                 status.user.description=status.user.description.replace('\n', ' ')
                 status.user.description=status.user.description.replace('\r', ' ')
-            users_mentioned=''
+            
             retweet_id = ''
             retweet_uid = ''
             retweet = ''
@@ -144,11 +144,11 @@ class MyListener(StreamListener):
                        retweet_id, retweet_uid,retweet)
             order = 'insert into '+ table + '''(id, user_id, 
                 user_screen_name, username, created_at, full_text, 
-                users_mentioned,  in_reply_to_userid, 
+                  in_reply_to_userid, 
                 in_reply_to_userscreename, retweet_uid, retweet_id, retweet)
-                VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)'''
+                VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)'''
             twitter = (status.id_str, status.user.id_str, status.user.screen_name, status.user.name, 
-                   status.created_at, status.text, users_mentioned, 
+                   status.created_at, status.text,  
                    status.in_reply_to_user_id_str, status.in_reply_to_screen_name,
                    retweet_id, retweet_uid,retweet)
             c.execute(order, twitter)
