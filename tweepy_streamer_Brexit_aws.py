@@ -72,7 +72,7 @@ c = conn.cursor()
 c.execute('''CREATE TABLE if NOT EXISTS users
              (user_id CHAR(24) NOT NULL, user_screen_name CHAR(32), username CHAR(32),
              user_description VARCHAR, user_location CHAR(255), user_followers INT, 
-             user_friends INT, user_created at CHAR(255), PRIMARY KEY(user_id))''')
+             user_friends INT, user_created_at CHAR(255), PRIMARY KEY(user_id))''')
 
 c.execute('''CREATE TABLE if NOT EXISTS twitter
              (id CHAR(32) NOT NULL, user_id CHAR(24), user_screen_name CHAR(32), username CHAR(32),
