@@ -71,6 +71,7 @@ conn = pymysql.connect(loginfo[0],loginfo[1],loginfo[2],loginfo[3])
 
 
 c = conn.cursor()
+conn.createStatement().execute("SET names 'utf8mb4'")
 
 c.execute('''CREATE TABLE if NOT EXISTS users(user_id CHAR(24) NOT NULL, user_screen_name CHAR(32), username CHAR(32),
              user_description TEXT(512), user_location CHAR(100), user_followers INT, 
