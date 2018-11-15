@@ -51,10 +51,13 @@ def load_token(textfile):
 
 auth=load_token("auth.txt") 
 
+costumer_token=auth[0]
+costumer_key=auth[1]
+access_token=auth[2]
+access_key=auth[3]
 
-
-auth = OAuthHandler(auth[0], auth[1])
-auth.set_access_token(auth[2], auth[3])
+auth = OAuthHandler(costumer_token, costumer_key)
+auth.set_access_token(access_token, access_key)
 api = tweepy.API(auth, wait_on_rate_limit = True, wait_on_rate_limit_notify = True)
 from tweepy import Stream
 from tweepy.streaming import StreamListener
