@@ -49,10 +49,13 @@ def load_token(textfile):
 
 auth=load_token("auth.txt") 
 
+costumer_token=auth[0]
+costumer_key=auth[1]
+access_token=auth[2]
+access_key=auth[3]
 
-
-auth = OAuthHandler(auth[0], auth[1])
-auth.set_access_token(auth[2], auth[3])
+auth = OAuthHandler(costumer_token, costmer_key)
+auth.set_access_token(access_token, access_key)
 api = tweepy.API(auth, wait_on_rate_limit = True, wait_on_rate_limit_notify = True)
 from tweepy import Stream
 from tweepy.streaming import StreamListener
@@ -60,15 +63,10 @@ timestamp_previous = time.strftime("%Y%m%d_%H")
 hourscounter = 0
 
 
-
-loginfo= {'host': 'ec2-18-130-144-227.eu-west-2.compute.amazonaws.com',
-  'username': 'lindal97'@'%',
-  'password': 'BreXit2019@',
-  'db': 'twitterdata'}
+loginfo= load_token('SQL auth.txt')
 
 
-
-conn = pymysql.connect()
+conn = pymysql.connect(loginfo[0],loginfo[1],loginfo[2],loginfo[3])
 c = conn.cursor()
 
 c.execute('''CREATE TABLE if NOT EXISTS users
